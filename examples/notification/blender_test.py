@@ -4,17 +4,19 @@ import sys
 sys.path.append('../..')
 
 import bgui
+import bgui.bge_utils
 import bge
 import time
 
-class MySys(bgui.System):
+class MySys(bgui.bge_utils.System):
     """
     A subclass to handle our game specific gui
     """
 
     def __init__(self):
         # Initialize the system
-        bgui.System.__init__(self)
+        super().__init__('../../themes/default')
+
         self.clear_time = time.time()
         self.note_visible = False
 

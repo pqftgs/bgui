@@ -4,15 +4,17 @@ import sys
 sys.path.append('../..')
 
 import bgui
+import bgui.bge_utils
 import bge
 
-class MySys(bgui.System):
+
+class MySys(bgui.bge_utils.System):
     """
     A subclass to handle our game specific gui
     """
     def __init__(self, viewport):
         # Initialize the system
-        bgui.System.__init__(self, '../../themes/default')
+        super().__init__('../../themes/default')
 
         # viewport = [x, y, width, height]
         # Use a frame to store all of our widgets

@@ -3,10 +3,11 @@ import unittest
 import gc
 
 import bgui
+import bgui.text
 
 class TestMemoryLeaks(unittest.TestCase):
     def setUp(self):
-        self.system = bgui.System()
+        self.system = bgui.System(bgui.text.TextLibrary)
 
     def test_memory_leak_widget(self):
         w = bgui.Widget(self.system)
@@ -21,7 +22,7 @@ class TestMemoryLeaks(unittest.TestCase):
 
         gc.collect()
         self.assertListEqual(gc.garbage, [])
-    
+
     @unittest.skip("Fonts are causing a segfault")
     def test_memory_leak_frame_button(self):
         w = bgui.FrameButton(self.system)

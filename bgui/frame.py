@@ -1,5 +1,5 @@
 from .gl_utils import *
-from .widget import Widget, BGUI_DEFAULT
+from .widget import Widget, BGUI_DEFAULT, BGUI_CLIP
 
 
 class Frame(Widget):
@@ -40,7 +40,7 @@ class Frame(Widget):
 
         #: The color of the border around the frame.
         self.border_color = self.theme['BorderColor']
-        
+
         #: The size of the border around the frame.
         if border is not None:
             self.border = border
@@ -83,4 +83,11 @@ class Frame(Widget):
             glLineWidth(1.0)
             glPolygonMode(GL_FRONT, GL_FILL)
 
-        Widget._draw(self)
+        if (self.options & BGUI_CLIP):
+            glEnable(GL_SCISSOR_TEST)
+            glScissor(int(self.position[0]), int(self.position[1]),
+                      int(self.size[0]), int(self.size[1]))
+            Widget._draw(self)
+            glDisable(GL_SCISSOR_TEST)
+        else:
+            Widget._draw(self)

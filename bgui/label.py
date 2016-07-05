@@ -15,7 +15,7 @@ class Label(Widget):
                 }
 
     def __init__(self, parent, name=None, text="", font=None, pt_size=None, color=None,
-                outline_color=None, outline_size=None, outline_smoothing=None, pos=[0, 0], sub_theme='', options=BGUI_DEFAULT):
+                outline_color=None, outline_size=None, outline_smoothing=None, mask=None, pos=[0, 0], sub_theme='', options=BGUI_DEFAULT):
         """
         :param parent: the widget's parent
         :param name: the name of the widget
@@ -62,6 +62,8 @@ class Label(Widget):
         else:
             self.outline_smoothing = self.theme['OutlineSmoothing']
 
+        self.mask = mask
+
         self.text = text
 
     @property
@@ -97,6 +99,8 @@ class Label(Widget):
 
     def _draw_text(self, x, y):
         for i, txt in enumerate([i for i in self._text.split('\n')]):
+            if self.mask is not None:
+                txt = self.mask * len(txt)
             self.system.textlib.position(self.fontid, x, y - (self.size[1] * i), 0)
             self.system.textlib.draw(self.fontid, txt.replace('\t', '    '))
 

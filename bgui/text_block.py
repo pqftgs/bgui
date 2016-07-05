@@ -10,7 +10,7 @@ class TextBlock(Widget):
                 'LabelSubTheme': '',
                 }
 
-    def __init__(self, parent, name=None, text="", font=None, pt_size=None, color=None, aspect=None,
+    def __init__(self, parent, name=None, text="", font=None, pt_size=None, color=None, aspect=None, mask=None,
                     size=[1, 1], pos=[0, 0], sub_theme='', overflow=BGUI_OVERFLOW_HIDDEN, options=BGUI_DEFAULT):
         """
         :param parent: the widget's parent
@@ -30,6 +30,7 @@ class TextBlock(Widget):
 
         Widget.__init__(self, parent, name, aspect, size, pos, sub_theme, options)
 
+        self.mask = mask
         self.overflow = overflow
         self._font = font
         self._pt_size = pt_size
@@ -62,14 +63,14 @@ class TextBlock(Widget):
             lines[i] = v.split()
 
         cur_line = 0
-        line = Label(self, "tmp", "Mj|", font=self._font, pt_size=self._pt_size, color=self._color, sub_theme=self.theme['LabelSubTheme'])
+        line = Label(self, "tmp", "Mj|", font=self._font, pt_size=self._pt_size, color=self._color, mask=self.mask, sub_theme=self.theme['LabelSubTheme'])
         self._remove_widget(line)
         char_height = line.size[1]
 
         char_height /= self.size[1]
 
         for words in lines:
-            line = Label(self, "lines_" + str(cur_line), "", self._font, self._pt_size, self._color, pos=[0, 1 - (cur_line + 1) * char_height], sub_theme=self.theme['LabelSubTheme'])
+            line = Label(self, "lines_" + str(cur_line), "", self._font, self._pt_size, self._color, mask=self.mask, pos=[0, 1 - (cur_line + 1) * char_height], sub_theme=self.theme['LabelSubTheme'])
 
             while words:
                 # Try to add a word
@@ -83,7 +84,7 @@ class TextBlock(Widget):
                     line.text = line.text[0:-(len(words[0]) + 1)]
                     self._lines.append(line)
                     cur_line += 1
-                    line = Label(self, "lines_" + str(cur_line), "", self._font, self._pt_size, self._color, pos=[0, 1 - (cur_line + 1) * char_height], sub_theme=self.theme['LabelSubTheme'])
+                    line = Label(self, "lines_" + str(cur_line), "", self._font, self._pt_size, self._color, mask=self.mask, pos=[0, 1 - (cur_line + 1) * char_height], sub_theme=self.theme['LabelSubTheme'])
                 else:
                     # The word fit, so remove it from the words list
                     words.remove(words[0])

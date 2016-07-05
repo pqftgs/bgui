@@ -42,7 +42,7 @@ class TextInput(Widget):
                 'LabelSubTheme': '',
                 }
 
-    def __init__(self, parent, name=None, text="", prefix="", font=None, pt_size=None, color=None,
+    def __init__(self, parent, name=None, text="", prefix="", font=None, pt_size=None, color=None, mask=None,
                     aspect=None, size=[1, 1], pos=[0, 0], sub_theme='', input_options=BGUI_INPUT_DEFAULT, options=BGUI_DEFAULT):
         """
         :param parent: the widget's parent
@@ -63,6 +63,7 @@ class TextInput(Widget):
         Widget.__init__(self, parent, name, aspect, size, pos, sub_theme, options)
 
         self.text_prefix = prefix
+        self.mask = mask
         self.pos = len(text)
         self.input_options = input_options
         self.colors = {}
@@ -71,7 +72,7 @@ class TextInput(Widget):
         self.frame = Frame(self, size=[1, 1], options=BGUI_NO_FOCUS | BGUI_DEFAULT | BGUI_CENTERY)
         self.highlight = Frame(self, size=self.frame.size, border=0, options=BGUI_NO_FOCUS | BGUI_CENTERY | BGUI_NO_NORMALIZE)
         self.cursor = Frame(self, size=[1, 1], border=0, options=BGUI_NO_FOCUS | BGUI_CENTERY | BGUI_NO_NORMALIZE)
-        self.label = Label(self, text=text, font=font, pt_size=pt_size, sub_theme=self.theme['LabelSubTheme'], options=BGUI_NO_FOCUS | BGUI_DEFAULT)
+        self.label = Label(self, text=text, font=font, pt_size=pt_size, mask=mask, sub_theme=self.theme['LabelSubTheme'], options=BGUI_NO_FOCUS | BGUI_DEFAULT)
 
         #Color and setting initialization
         self.colormode = 0
@@ -168,6 +169,8 @@ class TextInput(Widget):
     def _update_char_widths(self):
         self.char_widths = []
         for char in self.text:
+            if self.mask is not None:
+                char = self.mask
             self.char_widths.append(self.system.textlib.dimensions(self.label.fontid, char * 20)[0] / 20)
 
     def select_all(self):
@@ -215,8 +218,13 @@ class TextInput(Widget):
 
     #Selection Code
     def update_selection(self):
-        left = self.fd + self.system.textlib.dimensions(self.label.fontid, self.text[:self.slice[0]])[0]
-        right = self.fd + self.system.textlib.dimensions(self.label.fontid, self.text[:self.slice[1]])[0]
+        if self.mask is None:
+            text = self.text
+        else:
+            text = self.mask * len(self.text)
+
+        left = self.fd + self.system.textlib.dimensions(self.label.fontid, text[:self.slice[0]])[0]
+        right = self.fd + self.system.textlib.dimensions(self.label.fontid, text[:self.slice[1]])[0]
         self.highlight.position = [left, 1]
         self.highlight.size = [right - left, self.frame.size[1] * .8]
         if self.slice_direction in [0, -1]:
